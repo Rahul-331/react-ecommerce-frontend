@@ -61,112 +61,62 @@ const Product = () => {
   };
   if (!product) {
     return (
-      <h2 className="text-center" style={{ padding: "10rem" }}>
-        Loading...
-      </h2>
+      <div className="empty-state" style={{ padding: "12rem 2rem" }}>
+        <h2>Loading product details...</h2>
+      </div>
     );
   }
+
   return (
-    <>
-      <div className="containers" style={{ display: "flex" }}>
-        <img
-          className="left-column-img"
-          src={imageUrl}
-          alt={product.imageName}
-          style={{ width: "50%", height: "auto" }}
-        />
+    <section className="detail-page">
+      <div className="detail-grid">
+        <div className="detail-image-panel">
+          <img
+            className="detail-image"
+            src={imageUrl}
+            alt={product.imageName}
+          />
+        </div>
 
-        <div className="right-column" style={{ width: "50%" }}>
-          <div className="product-description">
-            <div style={{display:'flex',justifyContent:'space-between' }}>
-            <span style={{ fontSize: "1.2rem", fontWeight: 'lighter' }}>
-              {product.category}
+        <div className="detail-info-panel">
+          <span className="eyebrow">{product.category}</span>
+          <h1>{product.name}</h1>
+          <p className="brand">{product.brand}</p>
+
+          <div className="detail-tags">
+            <span className={`badge ${product.productAvailable ? "badge-available" : "badge-out"}`}>
+              {product.productAvailable ? "Available" : "Out of stock"}
             </span>
-            <p className="release-date" style={{ marginBottom: "2rem" }}>
-              
-              <h6>Listed : <span> <i> {new Date(product.releaseDate).toLocaleDateString()}</i></span></h6>
-              {/* <i> {new Date(product.releaseDate).toLocaleDateString()}</i> */}
-            </p>
+            <span className="badge badge-available">
+              Listed {new Date(product.releaseDate).toLocaleDateString()}
+            </span>
+          </div>
+
+          <div>
+            <h6 style={{ marginBottom: "0.75rem" }}>Product description</h6>
+            <p className="detail-description">{product.description}</p>
+          </div>
+
+          <div className="detail-footer">
+            <div className="price-block">
+              <span className="price">₹{product.price}</span>
+              <span className="stock-label">Stock Available: {product.stockQuantity}</span>
             </div>
-            
-           
-            <h1 style={{ fontSize: "2rem", marginBottom: "0.5rem",textTransform: 'capitalize', letterSpacing:'1px' }}>
-              {product.name}
-            </h1>
-            <i style={{ marginBottom: "3rem" }}>{product.brand}</i>
-            <p style={{fontWeight:'bold',fontSize:'1rem',margin:'10px 0px 0px'}}>PRODUCT DESCRIPTION :</p>
-            <p style={{ marginBottom: "1rem" }}>{product.description}</p>
-          </div>
-
-          <div className="product-price">
-            <span style={{ fontSize: "2rem", fontWeight: "bold" }}>
-              {"$" + product.price}
-            </span>
-            <button
-              className={`cart-btn ${
-                !product.productAvailable ? "disabled-btn" : ""
-              }`}
-              onClick={handlAddToCart}
-              disabled={!product.productAvailable}
-              style={{
-                padding: "1rem 2rem",
-                fontSize: "1rem",
-                backgroundColor: "#007bff",
-                color: "white",
-                border: "none",
-                borderRadius: "5px",
-                cursor: "pointer",
-                marginBottom: "1rem",
-              }}
-            >
-              {product.productAvailable ? "Add to cart" : "Out of Stock"}
-            </button>
-            <h6 style={{ marginBottom: "1rem" }}>
-              Stock Available :{" "}
-              <i style={{ color: "green", fontWeight: "bold" }}>
-                {product.stockQuantity}
-              </i>
-            </h6>
-          
-          </div>
-          <div className="update-button" style={{ display: "flex", gap: "1rem" }}>
-            <button
-              className="btn btn-primary"
-              type="button"
-              onClick={handleEditClick}
-              style={{
-                padding: "1rem 2rem",
-                fontSize: "1rem",
-                backgroundColor: "#007bff",
-                color: "white",
-                border: "none",
-                borderRadius: "5px",
-                cursor: "pointer",
-              }}
-            >
-              Update
-            </button>
-            {/* <UpdateProduct product={product} onUpdate={handleUpdate} /> */}
-            <button
-              className="btn btn-primary"
-              type="button"
-              onClick={deleteProduct}
-              style={{
-                padding: "1rem 2rem",
-                fontSize: "1rem",
-                backgroundColor: "#dc3545",
-                color: "white",
-                border: "none",
-                borderRadius: "5px",
-                cursor: "pointer",
-              }}
-            >
-              Delete
-            </button>
+            <div className="detail-actions">
+              <button className="btn btn-primary" type="button" onClick={handlAddToCart} disabled={!product.productAvailable}>
+                {product.productAvailable ? "Add to Cart" : "Unavailable"}
+              </button>
+              <button className="btn btn-secondary" type="button" onClick={handleEditClick}>
+                Update
+              </button>
+              <button className="btn btn-secondary" type="button" onClick={deleteProduct}>
+                Delete
+              </button>
+            </div>
           </div>
         </div>
       </div>
-    </>
+    </section>
   );
 };
 

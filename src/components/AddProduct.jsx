@@ -50,22 +50,23 @@ const AddProduct = () => {
   };
 
   return (
-    <div className="container">
-    <div className="center-container">
-      <form className="row g-3 pt-5" onSubmit={submitHandler}>
-        <div className="col-md-6">
-          <label className="form-label">
-            <h6>Name</h6>
-          </label>
-          <input
-            type="text"
-            className="form-control"
-            placeholder="Product Name"
-            onChange={handleInputChange}
-            value={product.name}
-            name="name"
-          />
-        </div>
+    <section className="form-card">
+      <div className="center-container">
+        <h1>Add Product</h1>
+        <form className="row g-3 pt-2" onSubmit={submitHandler}>
+          <div className="col-md-6">
+            <label className="form-label">
+              <h6>Name</h6>
+            </label>
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Product Name"
+              onChange={handleInputChange}
+              value={product.name}
+              name="name"
+            />
+          </div>
         <div className="col-md-6">
           <label className="form-label">
             <h6>Brand</h6>
@@ -196,7 +197,7 @@ const AddProduct = () => {
         </div>
       </form>
     </div>
-    </div>
+  </section>
   );
 };
 

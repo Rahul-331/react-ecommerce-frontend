@@ -7,9 +7,9 @@ const AppContext = createContext({
   cart: [],
   addToCart: (product) => {},
   removeFromCart: (productId) => {},
-  refreshData:() =>{},
-  updateStockQuantity: (productId, newQuantity) =>{}
-  
+  updateCartQuantity: (productId, delta) => {},
+  refreshData: () => {},
+  updateStockQuantity: (productId, newQuantity) => {},
 });
 
 export const AppProvider = ({ children }) => {
@@ -36,11 +36,21 @@ export const AppProvider = ({ children }) => {
   };
 
   const removeFromCart = (productId) => {
-    console.log("productID",productId)
+    console.log("productID", productId);
     const updatedCart = cart.filter((item) => item.id !== productId);
     setCart(updatedCart);
     localStorage.setItem('cart', JSON.stringify(updatedCart));
-    console.log("CART",cart)
+    console.log("CART", cart);
+  };
+
+  const updateCartQuantity = (productId, delta) => {
+    const updatedCart = cart.map((item) =>
+      item.id === productId
+        ? { ...item, quantity: Math.max(1, (item.quantity || 1) + delta) }
+        : item
+    );
+    setCart(updatedCart);
+    localStorage.setItem('cart', JSON.stringify(updatedCart));
   };
 
   const refreshData = async () => {
@@ -52,7 +62,7 @@ export const AppProvider = ({ children }) => {
     }
   };
 
-  const clearCart =() =>{
+  const clearCart = () => {
     setCart([]);
   }
   
@@ -65,7 +75,7 @@ export const AppProvider = ({ children }) => {
   }, [cart]);
   
   return (
-    <AppContext.Provider value={{ data, isError, cart, addToCart, removeFromCart,refreshData, clearCart  }}>
+    <AppContext.Provider value={{ data, isError, cart, addToCart, removeFromCart, updateCartQuantity, refreshData, clearCart }}>
       {children}
     </AppContext.Provider>
   );
