@@ -112,6 +112,15 @@ http://localhost:8080
 
 ---
 
+## 🙏 Acknowledgements
+
+This project was developed as part of my learning journey in Spring Boot and React. It was inspired by the excellent tutorial series by Navin Reddy. I have customized and extended the project while exploring full-stack application development.
+
+Original Learning Resource:
+- https://github.com/navinreddy20
+
+---
+
 ## 👨‍💻 Author
 
 **Rahul Dandu**
