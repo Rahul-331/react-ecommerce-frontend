@@ -121,10 +121,10 @@ const Home = ({ selectedCategory, onSelectCategory }) => {
           </div>
         ) : (
           <div className="product-grid">
-            {filteredProducts.map((product) => {
+            {filteredProducts.map((product, index) => {
               const { id, brand, name, price, productAvailable, imageUrl } = product;
               return (
-                <article className="product-card" key={id}>
+                <article className="product-card" key={id} style={{ animationDelay: `${index * 0.07}s` }}>
                   <Link to={`/product/${id}`} className="product-card-link">
                     <div className="product-card-image-wrapper">
                       <img src={imageUrl} alt={name} className="product-card-image" />
