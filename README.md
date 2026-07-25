@@ -1,35 +1,55 @@
 # 🛒 React E-Commerce Frontend
 
-A modern and responsive e-commerce frontend built with **React** and **Vite**. This application communicates with a Spring Boot REST API to provide a seamless shopping experience for browsing and managing products.
+A modern and responsive e-commerce frontend built with **React** and **Vite**. The application consumes a Spring Boot REST API to provide a complete product management experience.
+
+## 🌐 Live Demo
+
+**Frontend:**  
+https://react-ecommerce-frontend-0477.onrender.com/
+
+**Backend API:**  
+https://springboot-ecommerce-backend-0q40.onrender.com
+
+---
 
 ## ✨ Features
 
-- 📦 View all available products
-- 🔍 Product details
-- ➕ Add new products
-- ✏️ Update existing products
-- 🗑️ Delete products
-- 📱 Responsive user interface
-- ⚡ Fast development with Vite
-- 🔗 REST API integration with Spring Boot backend
+- 📦 View Products
+- 🔍 Search Products
+- ➕ Add Products
+- ✏️ Update Products
+- 🗑️ Delete Products
+- 🖼️ Product Image Upload & Display
+- 🛒 Shopping Cart
+- 📱 Responsive Design
+- ⚡ Fast Vite Development
 
 ---
 
 ## 🛠️ Tech Stack
 
+### Frontend
+
 - React
 - Vite
-- JavaScript (ES6+)
-- HTML5
-- CSS3
 - Axios
-- React Context API
+- React Router
+- Context API
+- CSS
+
+### Backend
+
+- Spring Boot
+- Spring Data JPA
+- PostgreSQL
+- Docker
+- Render
 
 ---
 
 ## 📂 Project Structure
 
-```
+```text
 src
 ├── assets/
 ├── components/
@@ -40,6 +60,7 @@ src
 │   ├── Product.jsx
 │   └── UpdateProduct.jsx
 ├── Context/
+├── axios.jsx
 ├── App.jsx
 └── main.jsx
 ```
@@ -61,13 +82,13 @@ cd react-ecommerce-frontend
 npm install
 ```
 
-### Start the Development Server
+### Run
 
 ```bash
 npm run dev
 ```
 
-The application will be available at:
+The application runs at:
 
 ```
 http://localhost:5173
@@ -75,49 +96,33 @@ http://localhost:5173
 
 ---
 
-## 🔗 Backend API
-
-This frontend communicates with the Spring Boot backend available here:
-
-**Backend Repository:**
+## 🔗 Backend Repository
 
 https://github.com/Rahul-331/springboot-ecommerce-backend
 
-By default, the backend should be running at:
+---
 
-```
-http://localhost:8080
-```
+## ☁️ Deployment
+
+| Service | Platform |
+|----------|----------|
+| Frontend | Render Static Site |
+| Backend | Render Web Service |
+| Database | Render PostgreSQL |
 
 ---
 
-## 📸 Screenshots
-
-> Screenshots of the application will be added soon.
-
----
 
 ## 🔮 Future Enhancements
 
-- User Authentication & Authorization
-- Shopping Cart Persistence
+- User Authentication (JWT)
 - Wishlist
-- Product Search
-- Product Filtering
-- Pagination
 - Order Management
 - Payment Gateway Integration
-- Responsive UI Improvements
+- Product Categories
+- Pagination
+- Admin Dashboard
 - Dark Mode
-
----
-
-## 🙏 Acknowledgements
-
-This project was developed as part of my learning journey in Spring Boot and React. It was inspired by the excellent tutorial series by Navin Reddy. I have customized and extended the project while exploring full-stack application development.
-
-Original Learning Resource:
-- https://github.com/navinreddy20
 
 ---
 
@@ -125,11 +130,11 @@ Original Learning Resource:
 
 **Rahul Dandu**
 
-- GitHub: https://github.com/Rahul-331
-- LinkedIn: https://www.linkedin.com/in/dandu-rahul-a11691345/
+GitHub: https://github.com/Rahul-331
+
+LinkedIn:
+https://www.linkedin.com/in/dandu-rahul-a11691345/
 
 ---
 
-## ⭐ Support
-
-If you found this project useful, consider giving it a ⭐ on GitHub.
+⭐ If you found this project useful, consider giving it a star.
