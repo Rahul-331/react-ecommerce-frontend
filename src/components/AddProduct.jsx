@@ -50,7 +50,7 @@ const AddProduct = () => {
     );
 
     axios
-      .post("http://localhost:8080/api/product", formData, {
+      .post("https://springboot-ecommerce-backend-0q40.onrender.com/api/product", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },

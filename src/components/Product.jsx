@@ -17,7 +17,7 @@ const Product = () => {
     const fetchProduct = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8080/api/product/${id}`
+          `https://springboot-ecommerce-backend-0q40.onrender.com/api/product/${id}`
         );
         setProduct(response.data);
         if (response.data.imageName) {
@@ -33,7 +33,7 @@ const Product = () => {
     const fetchImage = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8080/api/product/${id}/image`,
+          `https://springboot-ecommerce-backend-0q40.onrender.com/api/product/${id}/image`,
           { responseType: "blob" }
         );
         setImageUrl(URL.createObjectURL(response.data));
@@ -53,7 +53,7 @@ const Product = () => {
   const handleDeleteProduct = async () => {
     setDeleting(true);
     try {
-      await axios.delete(`http://localhost:8080/api/product/${id}`);
+      await axios.delete(`https://springboot-ecommerce-backend-0q40.onrender.com/api/product/${id}`);
       removeFromCart(id);
       showToast(`Product "${product.name}" deleted successfully`, "info");
       refreshData();
@@ -169,4 +169,4 @@ const Product = () => {
   );
 };
 
-export default Product;
+export default Product;

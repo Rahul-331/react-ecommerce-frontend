@@ -46,7 +46,7 @@ const Navbar = ({ onSelectCategory, selectedCategory }) => {
         setSearchResults(filtered);
       } else {
         try {
-          const response = await axios.get(`http://localhost:8080/api/products/search?keyword=${value}`);
+          const response = await axios.get(`https://springboot-ecommerce-backend-0q40.onrender.com/api/products/search?keyword=${value}`);
           setSearchResults(response.data);
         } catch (error) {
           console.error("Error searching:", error);
@@ -80,23 +80,11 @@ const Navbar = ({ onSelectCategory, selectedCategory }) => {
           <Link className="navbar-brand" to="/">
             <i className="bi bi-bag-heart-fill"></i> CAMPER
           </Link>
-          
-          <button
-            className="navbar-toggler"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent"
-            aria-expanded="false"
-            aria-label="Toggle navigation"
-          >
-            <span className="navbar-toggler-icon"></span>
-          </button>
 
           <div className="collapse navbar-collapse" id="navbarSupportedContent">
             <ul className="navbar-nav me-auto mb-2 mb-lg-0">
               <li className="nav-item">
-                <Link className={`nav-link ${!selectedCategory ? "active" : ""}`} to="/" onClick={() => handleCategorySelect("")}>
+                <Link className={`nav-link ${!selectedCategory ? "active" : ""}`} to="/" onClick={() => onSelectCategory("")}>
                   Home
                 </Link>
               </li>
@@ -128,63 +116,64 @@ const Navbar = ({ onSelectCategory, selectedCategory }) => {
                 </ul>
               </li>
             </ul>
+          </div>
 
-            <div className="navbar-actions">
-              <div className="navbar-search" ref={searchRef}>
-                <div className="search-input-wrapper">
-                  <i className="bi bi-search"></i>
-                  <input
-                    className="form-control"
-                    type="search"
-                    placeholder="Search laptop, headphone..."
-                    aria-label="Search"
-                    value={input}
-                    onChange={(e) => handleChange(e.target.value)}
-                    onFocus={() => input.length > 0 && setShowSearchResults(true)}
-                  />
-                </div>
-                {showSearchResults && (
-                  <div className="search-dropdown">
-                    {searchResults.length > 0 ? (
-                      searchResults.map((result) => (
-                        <div key={result.id} className="search-result-item">
-                          <Link
-                            to={`/product/${result.id}`}
-                            className="search-result-link"
-                            onClick={() => {
-                              setShowSearchResults(false);
-                              setInput("");
-                            }}
-                          >
-                            <div className="search-item-info">
-                              <span className="search-item-title">{result.name}</span>
-                              <span className="search-item-meta">{result.brand} • ₹{result.price}</span>
-                            </div>
-                          </Link>
-                        </div>
-                      ))
-                    ) : (
-                      <div className="no-results-message">No matching products found</div>
-                    )}
-                  </div>
-                )}
+          <div className="navbar-actions">
+            <div className="navbar-search" ref={searchRef}>
+              <div className="search-input-wrapper">
+                <i className="bi bi-search"></i>
+                <input
+                  className="form-control"
+                  type="search"
+                  placeholder="Search products..."
+                  aria-label="Search"
+                  value={input}
+                  onChange={(e) => handleChange(e.target.value)}
+                  onFocus={() => input.length > 0 && setShowSearchResults(true)}
+                />
               </div>
-
-              <button className="theme-btn" onClick={toggleTheme} title="Toggle Dark/Light Mode">
-                {theme === "dark-theme" ? <i className="bi bi-sun-fill"></i> : <i className="bi bi-moon-fill"></i>}
-              </button>
-
-              <Link className="nav-link cart-link" to="/cart">
-                <i className="bi bi-cart-fill"></i>
-                <span>Cart</span>
-                {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
-              </Link>
+              {showSearchResults && (
+                <div className="search-dropdown">
+                  {searchResults.length > 0 ? (
+                    searchResults.map((result) => (
+                      <div key={result.id} className="search-result-item">
+                        <Link
+                          to={`/product/${result.id}`}
+                          className="search-result-link"
+                          onClick={() => {
+                            setShowSearchResults(false);
+                            setInput("");
+                          }}
+                        >
+                          <div className="search-item-info">
+                            <span className="search-item-title">{result.name}</span>
+                            <span className="search-item-meta">{result.brand} • ₹{result.price}</span>
+                          </div>
+                        </Link>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="no-results-message">No matching products found</div>
+                  )}
+                </div>
+              )}
             </div>
+
+            <button className="theme-btn" onClick={toggleTheme} title="Toggle Dark/Light Mode" type="button">
+              {theme === "dark-theme" ? <i className="bi bi-sun-fill"></i> : <i className="bi bi-moon-fill"></i>}
+            </button>
+
+            <Link className="nav-link cart-link" to="/cart">
+              <i className="bi bi-cart-fill"></i>
+              <span>Cart</span>
+              {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
+            </Link>
           </div>
         </div>
       </nav>
     </header>
   );
+
 };
 
 export default Navbar;

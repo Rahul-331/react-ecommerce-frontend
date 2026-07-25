@@ -21,7 +21,7 @@ const Home = ({ selectedCategory, onSelectCategory }) => {
           data.map(async (product) => {
             try {
               const response = await axios.get(
-                `http://localhost:8080/api/product/${product.id}/image`,
+                `https://springboot-ecommerce-backend-0q40.onrender.com/api/product/${product.id}/image`,
                 { responseType: "blob", timeout: 1500 }
               );
               const imageUrl = URL.createObjectURL(response.data);

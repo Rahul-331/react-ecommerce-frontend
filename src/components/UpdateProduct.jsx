@@ -29,7 +29,7 @@ const UpdateProduct = () => {
     const fetchProduct = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8080/api/product/${id}`
+          `https://springboot-ecommerce-backend-0q40.onrender.com/api/product/${id}`
         );
 
         setProduct(response.data);
@@ -37,7 +37,7 @@ const UpdateProduct = () => {
 
         try {
           const responseImage = await axios.get(
-            `http://localhost:8080/api/product/${id}/image`,
+            `https://springboot-ecommerce-backend-0q40.onrender.com/api/product/${id}/image`,
             { responseType: "blob" }
           );
           const imageFile = await converUrlToFile(responseImage.data, response.data.imageName || "product.jpg");
@@ -73,7 +73,7 @@ const UpdateProduct = () => {
     );
 
     axios
-      .put(`http://localhost:8080/api/product/${id}`, updatedProductData, {
+      .put(`https://springboot-ecommerce-backend-0q40.onrender.com/api/product/${id}`, updatedProductData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -293,4 +293,4 @@ const UpdateProduct = () => {
   );
 };
 
-export default UpdateProduct;
+export default UpdateProduct;

@@ -32,7 +32,7 @@ const Cart = () => {
             if (item.id) {
               try {
                 const response = await axios.get(
-                  `http://localhost:8080/api/product/${item.id}/image`,
+                  `https://springboot-ecommerce-backend-0q40.onrender.com/api/product/${item.id}/image`,
                   { responseType: "blob" }
                 );
                 imageUrl = URL.createObjectURL(response.data);
