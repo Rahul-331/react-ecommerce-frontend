@@ -1,11 +1,18 @@
-import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useState, useEffect, useContext } from "react";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import axios from "axios";
+import AppContext from "../Context/Context";
 
 const UpdateProduct = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const { showToast, refreshData } = useContext(AppContext);
+
   const [product, setProduct] = useState({});
   const [image, setImage] = useState();
+  const [imagePreview, setImagePreview] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+
   const [updateProduct, setUpdateProduct] = useState({
     id: null,
     name: "",
@@ -26,14 +33,19 @@ const UpdateProduct = () => {
         );
 
         setProduct(response.data);
-      
-        const responseImage = await axios.get(
-          `http://localhost:8080/api/product/${id}/image`,
-          { responseType: "blob" }
-        );
-       const imageFile = await converUrlToFile(responseImage.data,response.data.imageName)
-        setImage(imageFile);     
         setUpdateProduct(response.data);
+
+        try {
+          const responseImage = await axios.get(
+            `http://localhost:8080/api/product/${id}/image`,
+            { responseType: "blob" }
+          );
+          const imageFile = await converUrlToFile(responseImage.data, response.data.imageName || "product.jpg");
+          setImage(imageFile);
+          setImagePreview(URL.createObjectURL(responseImage.data));
+        } catch (imgErr) {
+          console.warn("Could not fetch existing image blob", imgErr);
+        }
       } catch (error) {
         console.error("Error fetching product:", error);
       }
@@ -42,47 +54,43 @@ const UpdateProduct = () => {
     fetchProduct();
   }, [id]);
 
-  useEffect(() => {
-    console.log("image Updated", image);
-  }, [image]);
-
-
-
-  const converUrlToFile = async(blobData, fileName) => {
+  const converUrlToFile = async (blobData, fileName) => {
     const file = new File([blobData], fileName, { type: blobData.type });
     return file;
-  }
- 
-  const handleSubmit = async(e) => {
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("images", image)
-    console.log("productsdfsfsf", updateProduct)
-    const updatedProduct = new FormData();
-    updatedProduct.append("imageFile", image);
-    updatedProduct.append(
+    setSubmitting(true);
+
+    const updatedProductData = new FormData();
+    if (image) {
+      updatedProductData.append("imageFile", image);
+    }
+    updatedProductData.append(
       "product",
       new Blob([JSON.stringify(updateProduct)], { type: "application/json" })
     );
-  
 
-  console.log("formData : ", updatedProduct)
     axios
-      .put(`http://localhost:8080/api/product/${id}`, updatedProduct, {
+      .put(`http://localhost:8080/api/product/${id}`, updatedProductData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       })
       .then((response) => {
-        console.log("Product updated successfully:", updatedProduct);
-        alert("Product updated successfully!");
+        showToast(`Product "${updateProduct.name}" updated successfully! ✨`, "success");
+        refreshData();
+        navigate(`/product/${id}`);
       })
       .catch((error) => {
         console.error("Error updating product:", error);
-        console.log("product unsuccessfull update",updateProduct)
-        alert("Failed to update product. Please try again.");
+        showToast("Failed to update product. Please try again.", "danger");
+      })
+      .finally(() => {
+        setSubmitting(false);
       });
   };
- 
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -91,17 +99,30 @@ const UpdateProduct = () => {
       [name]: value,
     });
   };
-  
+
   const handleImageChange = (e) => {
-    setImage(e.target.files[0]);
+    const file = e.target.files[0];
+    if (file) {
+      setImage(file);
+      setImagePreview(URL.createObjectURL(file));
+    }
   };
-  
 
   return (
     <section className="form-card">
+      <div style={{ marginBottom: "1.5rem" }}>
+        <Link to={`/product/${id}`} style={{ color: "var(--text-secondary)", fontWeight: 600 }}>
+          <i className="bi bi-arrow-left"></i> Back to product details
+        </Link>
+      </div>
+
       <div className="center-container">
         <h1>Update Product</h1>
-        <form className="row g-3 pt-1" onSubmit={handleSubmit}>
+        <p style={{ color: "var(--text-secondary)", marginBottom: "2rem" }}>
+          Modify the details or update inventory levels for this item.
+        </p>
+
+        <form className="row g-3" onSubmit={handleSubmit}>
           <div className="col-md-6">
             <label className="form-label">
               <h6>Name</h6>
@@ -115,6 +136,7 @@ const UpdateProduct = () => {
               name="name"
             />
           </div>
+
           <div className="col-md-6">
             <label className="form-label">
               <h6>Brand</h6>
@@ -129,23 +151,25 @@ const UpdateProduct = () => {
               id="brand"
             />
           </div>
+
           <div className="col-12">
             <label className="form-label">
               <h6>Description</h6>
             </label>
-            <input
-              type="text"
+            <textarea
               className="form-control"
               placeholder={product.description}
               name="description"
               onChange={handleChange}
               value={updateProduct.description}
               id="description"
+              rows={3}
             />
           </div>
-          <div className="col-5">
+
+          <div className="col-md-4">
             <label className="form-label">
-              <h6>Price</h6>
+              <h6>Price (₹)</h6>
             </label>
             <input
               type="number"
@@ -157,7 +181,8 @@ const UpdateProduct = () => {
               id="price"
             />
           </div>
-          <div className="col-md-6">
+
+          <div className="col-md-4">
             <label className="form-label">
               <h6>Category</h6>
             </label>
@@ -168,13 +193,13 @@ const UpdateProduct = () => {
               name="category"
               id="category"
             >
-              <option value="">Select category</option>
-              <option value="laptop">Laptop</option>
-              <option value="headphone">Headphone</option>
-              <option value="mobile">Mobile</option>
-              <option value="electronics">Electronics</option>
-              <option value="toys">Toys</option>
-              <option value="fashion">Fashion</option>
+              <option value="">Select Category</option>
+              <option value="Laptop">Laptop</option>
+              <option value="Headphone">Headphone</option>
+              <option value="Mobile">Mobile</option>
+              <option value="Electronics">Electronics</option>
+              <option value="Toys">Toys</option>
+              <option value="Fashion">Fashion</option>
             </select>
           </div>
 
@@ -192,31 +217,49 @@ const UpdateProduct = () => {
               id="stockQuantity"
             />
           </div>
-          <div className="col-md-8">
+
+          <div className="col-md-6">
             <label className="form-label">
-              <h6>Image</h6>
+              <h6>Release Date</h6>
             </label>
-            <img
-              src={image ? URL.createObjectURL(image) : "Image unavailable"}
-              alt={product.imageName}
-              style={{
-                width: "100%",
-                height: "180px",
-                objectFit: "cover",
-                padding: "5px",
-                margin: "0",
-              }}
+            <input
+              type="date"
+              className="form-control"
+              value={updateProduct.releaseDate ? updateProduct.releaseDate.split("T")[0] : ""}
+              name="releaseDate"
+              onChange={handleChange}
+              id="releaseDate"
             />
+          </div>
+
+          <div className="col-md-6">
+            <label className="form-label">
+              <h6>Update Product Image</h6>
+            </label>
             <input
               className="form-control"
               type="file"
               onChange={handleImageChange}
-              placeholder="Upload image"
+              accept="image/*"
               name="imageUrl"
               id="imageUrl"
             />
           </div>
-          <div className="col-12">
+
+          {imagePreview && (
+            <div className="col-12" style={{ marginTop: "1rem" }}>
+              <span style={{ fontSize: "0.85rem", color: "var(--text-muted)", display: "block", marginBottom: "0.5rem" }}>
+                Current / Selected Image:
+              </span>
+              <img
+                src={imagePreview}
+                alt="Product Preview"
+                style={{ width: "160px", height: "140px", objectFit: "cover", borderRadius: "var(--radius-md)", border: "1px solid var(--border-subtle)" }}
+              />
+            </div>
+          )}
+
+          <div className="col-12" style={{ marginTop: "1.25rem" }}>
             <div className="form-check">
               <input
                 className="form-check-input"
@@ -228,13 +271,20 @@ const UpdateProduct = () => {
                   setUpdateProduct({ ...updateProduct, productAvailable: e.target.checked })
                 }
               />
-              <label className="form-check-label">Product Available</label>
+              <label className="form-check-label" htmlFor="gridCheck" style={{ fontWeight: 600 }}>
+                Product Available
+              </label>
             </div>
           </div>
 
-          <div className="col-12">
-            <button type="submit" className="btn btn-primary">
-              Submit
+          <div className="col-12" style={{ marginTop: "1.75rem" }}>
+            <button
+              type="submit"
+              className="btn btn-primary"
+              disabled={submitting}
+              style={{ padding: "0.75rem 2rem", borderRadius: "var(--radius-pill)", fontWeight: 700 }}
+            >
+              {submitting ? "Updating..." : "Save Changes"}
             </button>
           </div>
         </form>
@@ -243,4 +293,4 @@ const UpdateProduct = () => {
   );
 };
 
-export default UpdateProduct;
+export default UpdateProduct;

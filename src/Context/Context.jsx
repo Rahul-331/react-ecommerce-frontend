@@ -5,42 +5,54 @@ const AppContext = createContext({
   data: [],
   isError: "",
   cart: [],
+  toast: null,
+  showToast: (message, type = "success") => {},
+  closeToast: () => {},
   addToCart: (product) => {},
   removeFromCart: (productId) => {},
   updateCartQuantity: (productId, delta) => {},
   refreshData: () => {},
   updateStockQuantity: (productId, newQuantity) => {},
+  clearCart: () => {},
 });
 
 export const AppProvider = ({ children }) => {
   const [data, setData] = useState([]);
   const [isError, setIsError] = useState("");
   const [cart, setCart] = useState(JSON.parse(localStorage.getItem('cart')) || []);
+  const [toast, setToast] = useState(null);
 
+  const showToast = (message, type = "success") => {
+    setToast({ message, type, id: Date.now() });
+  };
+
+  const closeToast = () => {
+    setToast(null);
+  };
 
   const addToCart = (product) => {
     const existingProductIndex = cart.findIndex((item) => item.id === product.id);
+    let updatedCart = [];
     if (existingProductIndex !== -1) {
-      const updatedCart = cart.map((item, index) =>
+      updatedCart = cart.map((item, index) =>
         index === existingProductIndex
           ? { ...item, quantity: item.quantity + 1 }
           : item
       );
-      setCart(updatedCart);
-      localStorage.setItem('cart', JSON.stringify(updatedCart));
     } else {
-      const updatedCart = [...cart, { ...product, quantity: 1 }];
-      setCart(updatedCart);
-      localStorage.setItem('cart', JSON.stringify(updatedCart));
+      updatedCart = [...cart, { ...product, quantity: 1 }];
     }
+    setCart(updatedCart);
+    localStorage.setItem('cart', JSON.stringify(updatedCart));
+    showToast(`Added "${product.name || 'Item'}" to your cart! ✨`, "success");
   };
 
   const removeFromCart = (productId) => {
-    console.log("productID", productId);
+    const itemToRemove = cart.find((item) => item.id === productId);
     const updatedCart = cart.filter((item) => item.id !== productId);
     setCart(updatedCart);
     localStorage.setItem('cart', JSON.stringify(updatedCart));
-    console.log("CART", cart);
+    showToast(`Removed "${itemToRemove?.name || 'Item'}" from cart`, "info");
   };
 
   const updateCartQuantity = (productId, delta) => {
@@ -64,8 +76,10 @@ export const AppProvider = ({ children }) => {
 
   const clearCart = () => {
     setCart([]);
-  }
-  
+    localStorage.removeItem('cart');
+    showToast("Cart has been cleared", "info");
+  };
+
   useEffect(() => {
     refreshData();
   }, []);
@@ -73,12 +87,26 @@ export const AppProvider = ({ children }) => {
   useEffect(() => {
     localStorage.setItem('cart', JSON.stringify(cart));
   }, [cart]);
-  
+
   return (
-    <AppContext.Provider value={{ data, isError, cart, addToCart, removeFromCart, updateCartQuantity, refreshData, clearCart }}>
+    <AppContext.Provider
+      value={{
+        data,
+        isError,
+        cart,
+        toast,
+        showToast,
+        closeToast,
+        addToCart,
+        removeFromCart,
+        updateCartQuantity,
+        refreshData,
+        clearCart,
+      }}
+    >
       {children}
     </AppContext.Provider>
   );
 };
 
-export default AppContext;
+export default AppContext;

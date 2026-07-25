@@ -3,6 +3,7 @@ import AppContext from "../Context/Context";
 import axios from "axios";
 import CheckoutPopup from "./CheckoutPopup";
 import { Button } from "react-bootstrap";
+import { Link } from "react-router-dom";
 
 const Cart = () => {
   const { cart, removeFromCart, updateCartQuantity, clearCart } = useContext(AppContext);
@@ -25,7 +26,8 @@ const Cart = () => {
       try {
         const loadedItems = await Promise.all(
           cart.map(async (item) => {
-            let imageUrl = "https://via.placeholder.com/260x260?text=No+Image";
+            const fallbackUrl = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"><rect width="200" height="200" fill="%236366f1" opacity="0.12"/><text x="50%" y="50%" font-family="sans-serif" font-weight="700" font-size="14" fill="%236366f1" text-anchor="middle">${encodeURIComponent(item.name || 'Item')}</text></svg>`;
+            let imageUrl = fallbackUrl;
 
             if (item.id) {
               try {
@@ -35,7 +37,7 @@ const Cart = () => {
                 );
                 imageUrl = URL.createObjectURL(response.data);
               } catch (error) {
-                console.warn("Unable to load image for cart item", item.id, error);
+                console.warn("Unable to load image for cart item", item.id);
               }
             }
 
@@ -66,18 +68,10 @@ const Cart = () => {
     if (updateCartQuantity) {
       updateCartQuantity(itemId, delta);
     }
-    setCartItems((items) =>
-      items.map((item) =>
-        item.id === itemId
-          ? { ...item, quantity: Math.max(1, (item.quantity || 1) + delta) }
-          : item
-      )
-    );
   };
 
   const handleRemove = (itemId) => {
     removeFromCart(itemId);
-    setCartItems((items) => items.filter((item) => item.id !== itemId));
   };
 
   const handleCheckout = () => {
@@ -90,38 +84,44 @@ const Cart = () => {
     <section className="shopping-cart">
       <div className="title-row">
         <div>
-          <h1>Shopping Bag</h1>
-          <p>Review your order, update quantities, or clear your cart before checkout.</p>
+          <h1>Shopping Cart</h1>
+          <p style={{ color: "var(--text-secondary)", margin: "0.25rem 0 0" }}>
+            Review your selected items and proceed to secure checkout.
+          </p>
         </div>
-        <Button
-          variant="outline-secondary"
-          className="clear-cart-btn"
-          onClick={() => {
-            clearCart();
-            setCartItems([]);
-          }}
-          disabled={cartItems.length === 0}
-        >
-          Clear cart
-        </Button>
+        {cartItems.length > 0 && (
+          <Button
+            variant="outline-secondary"
+            className="clear-cart-btn"
+            onClick={() => clearCart()}
+            style={{ borderRadius: "var(--radius-pill)" }}
+          >
+            <i className="bi bi-trash me-1"></i> Clear cart
+          </Button>
+        )}
       </div>
 
       {loading && (
-        <div className="empty" style={{ textAlign: "center", padding: "2rem" }}>
-          <h4>Loading cart...</h4>
+        <div className="empty-state" style={{ padding: "4rem 2rem" }}>
+          <i className="bi bi-arrow-repeat spin" style={{ fontSize: "2rem", color: "var(--accent-primary)" }}></i>
+          <h4 style={{ marginTop: "1rem" }}>Updating cart...</h4>
         </div>
       )}
 
       {fetchError && !loading && (
-        <div className="empty" style={{ textAlign: "center", padding: "2rem" }}>
+        <div className="empty-state" style={{ padding: "4rem 2rem" }}>
           <h4>{fetchError}</h4>
         </div>
       )}
 
       {!loading && cartItems.length === 0 && !fetchError ? (
-        <div className="empty" style={{ textAlign: "center", padding: "2rem" }}>
-          <h4>Your cart is empty</h4>
-          <p>Browse products and add your favorites to start shopping.</p>
+        <div className="empty-state">
+          <i className="bi bi-cart-x" style={{ fontSize: "3.5rem", color: "var(--text-muted)" }}></i>
+          <h4 style={{ marginTop: "1rem" }}>Your cart is empty</h4>
+          <p style={{ color: "var(--text-secondary)" }}>Discover top tech items and fashion products in our catalog.</p>
+          <Link to="/" className="btn btn-primary" style={{ marginTop: "1rem", borderRadius: "var(--radius-pill)" }}>
+            <i className="bi bi-shop me-1"></i> Start Shopping
+          </Link>
         </div>
       ) : (
         !loading && !fetchError && (
@@ -135,18 +135,18 @@ const Cart = () => {
                     </div>
 
                     <div className="description">
-                      <span>{item.brand}</span>
+                      <span>{item.brand || "CAMPER"}</span>
                       <strong>{item.name}</strong>
                       <span className="item-price">₹{item.price}</span>
                     </div>
 
                     <div className="quantity">
-                      <button className="quantity-btn" type="button" onClick={() => updateQuantity(item.id, 1)}>
-                        <i className="bi bi-plus-lg"></i>
-                      </button>
-                      <div className="quantity-value">{item.quantity}</div>
                       <button className="quantity-btn" type="button" onClick={() => updateQuantity(item.id, -1)}>
                         <i className="bi bi-dash-lg"></i>
+                      </button>
+                      <div className="quantity-value">{item.quantity}</div>
+                      <button className="quantity-btn" type="button" onClick={() => updateQuantity(item.id, 1)}>
+                        <i className="bi bi-plus-lg"></i>
                       </button>
                     </div>
 
@@ -162,11 +162,11 @@ const Cart = () => {
 
             <div className="checkout-summary">
               <div className="summary-text">
-                <span>Order total</span>
+                <span>Estimated Subtotal</span>
                 <strong>₹{totalPrice.toFixed(2)}</strong>
               </div>
               <Button className="btn btn-primary checkout-button" onClick={() => setShowModal(true)}>
-                Checkout
+                Proceed to Checkout <i className="bi bi-arrow-right ms-1"></i>
               </Button>
             </div>
           </>
@@ -185,3 +185,4 @@ const Cart = () => {
 };
 
 export default Cart;
+
